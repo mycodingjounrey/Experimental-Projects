@@ -1,0 +1,132 @@
+#include <iostream>
+#include <cmath>
+
+// Function prototypes
+double add(double a, double b);
+double subtract(double a, double b);
+double multiply(double a, double b);
+double divide(double a, double b);
+double power(double base, double exponent);
+double squareRoot(double num);
+double sine(double angle);
+double cosine(double angle);
+double tangent(double angle);
+
+int main() {
+    char choice;
+    double num1, num2;
+
+    std::cout << "Welcome to the Scientific Calculator!" << std::endl;
+    std::cout << "Available operations:" << std::endl;
+    std::cout << "1. Addition" << std::endl;
+    std::cout << "2. Subtraction" << std::endl;
+    std::cout << "3. Multiplication" << std::endl;
+    std::cout << "4. Division" << std::endl;
+    std::cout << "5. Exponentiation (a^b)" << std::endl;
+    std::cout << "6. Square Root of a number" << std::endl;
+    std::cout << "7. Sine of an angle in degrees" << std::endl;
+    std::cout << "8. Cosine of an angle in degrees" << std::endl;
+    std::cout << "9. Tangent of an angle in degrees" << std::endl;
+
+    std::cout << "Enter your choice: ";
+    std::cin >> choice;
+
+    switch (choice) {
+        case '1':
+            std::cout << "Enter two numbers: ";
+            std::cin >> num1 >> num2;
+            std::cout << "Result: " << add(num1, num2) << std::endl;
+            break;
+        case '2':
+            std::cout << "Enter two numbers: ";
+            std::cin >> num1 >> num2;
+            std::cout << "Result: " << subtract(num1, num2) << std::endl;
+            break;
+        case '3':
+            std::cout << "Enter two numbers: ";
+            std::cin >> num1 >> num2;
+            std::cout << "Result: " << multiply(num1, num2) << std::endl;
+            break;
+        case '4':
+            std::cout << "Enter two numbers: ";
+            std::cin >> num1 >> num2;
+            if (num2 == 0) {
+                std::cout << "Error: Division by zero." << std::endl;
+            } else {
+                std::cout << "Result: " << divide(num1, num2) << std::endl;
+            }
+            break;
+        case '5':
+            std::cout << "Enter base and exponent: ";
+            std::cin >> num1 >> num2;
+            std::cout << "Result: " << power(num1, num2) << std::endl;
+            break;
+        case '6':
+            std::cout << "Enter a number: ";
+            std::cin >> num1;
+            if (num1 < 0) {
+                std::cout << "Error: Cannot calculate square root of a negative number." << std::endl;
+            } else {
+                std::cout << "Result: " << squareRoot(num1) << std::endl;
+            }
+            break;
+        case '7':
+            std::cout << "Enter an angle in degrees: ";
+            std::cin >> num1;
+            std::cout << "Result: " << sine(num1) << std::endl;
+            break;
+        case '8':
+            std::cout << "Enter an angle in degrees: ";
+            std::cin >> num1;
+            std::cout << "Result: " << cosine(num1) << std::endl;
+            break;
+        case '9':
+            std::cout << "Enter an angle in degrees: ";
+            std::cin >> num1;
+            std::cout << "Result: " << tangent(num1) << std::endl;
+            break;
+        default:
+            std::cout << "Invalid choice." << std::endl;
+    }
+
+    return 0;
+}
+
+// Function definitions
+double add(double a, double b) {
+    return a + b;
+}
+
+double subtract(double a, double b) {
+    return a - b;
+}
+
+double multiply(double a, double b) {
+    return a * b;
+}
+
+double divide(double a, double b) {
+    if (b == 0) return INFINITY; // Handle division by zero
+    return a / b;
+}
+
+double power(double base, double exponent) {
+    return std::pow(base, exponent);
+}
+
+double squareRoot(double num) {
+    if (num < 0) return NAN; // Return NaN for negative numbers
+    return std::sqrt(num);
+}
+
+double sine(double angle) {
+    return std::sin(angle * M_PI / 180.0); // Convert degrees to radians
+}
+
+double cosine(double angle) {
+    return std::cos(angle * M_PI / 180.0); // Convert degrees to radians
+}
+
+double tangent(double angle) {
+    return std::tan(angle * M_PI / 180.0); // Convert degrees to radians
+}
