@@ -1,0 +1,86 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+import json
+import csv
+
+class TikTokCommentScraper:
+    def __init__(self):
+        self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 10)
+        self.target_keywords = ["keyword1", "keyword2", "spam"]
+        self.found_comments = []
+    
+    def scroll_feed(self, scrolls=10):
+        """Scroll through TikTok feed"""
+        for _ in range(scrolls):
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(2)
+    
+    def open_comments(self, video_element):
+        """Click comment button on a video"""
+        try:
+            comment_btn = video_element.find_element(By.CSS_SELECTOR, '[data-e2e="browse-comment-icon"]')
+            comment_btn.click()
+            time.sleep(2)
+            return True
+        except:
+            return False
+    
+    def extract_comments(self):
+        """Extract and filter comments"""
+        comments = self.driver.find_elements(By.CSS_SELECTOR, '[data-e2e="comment-level-1"]')
+        
+        for comment in comments:
+            try:
+                text = comment.find_element(By.CSS_SELECTOR, '[data-e2e="comment-text"]').text
+                if any(keyword.lower() in text.lower() for keyword in self.target_keywords):
+                    self.found_comments.append({
+                        'text': text,
+                        'timestamp': time.time(),
+                        'video_url': self.driver.current_url
+                    })
+            except:
+                continue
+    
+    def scroll_comments_section(self):
+        """Scroll to load more comments"""
+        comments_section = self.driver.find_element(By.CSS_SELECTOR, '[data-e2e="comments-container"]')
+        for _ in range(5):
+            self.driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", comments_section)
+            time.sleep(1)
+    
+    def save_comments(self, filename="tiktok_comments.json"):
+        """Save found comments to file"""
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(self.found_comments, f, indent=2)
+    
+    def run(self):
+        try:
+            self.driver.get("https://www.tiktok.com")
+            time.sleep(5)
+            
+            # Scroll main feed
+            self.scroll_feed(scrolls=5)
+            
+            # Find video elements and process comments
+            videos = self.driver.find_elements(By.CSS_SELECTOR, '[data-e2e="recommend-list-item-container"]')
+            
+            for video in videos[:5]:  # Limit to first 5 videos
+                if self.open_comments(video):
+                    self.scroll_comments_section()
+                    self.extract_comments()
+                    # Close comments
+                    self.driver.back()
+                    time.sleep(2)
+            
+            self.save_comments()
+            
+        finally:
+            self.driver.quit()
+
+# Usage
+scraper = TikTokCommentScraper()
+scraper.run()
